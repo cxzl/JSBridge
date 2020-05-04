@@ -171,7 +171,8 @@ public class CxzlWebView extends WebView {
                     if (clientImpl != null) {
                         clientImpl.clientProcessing(CxzlWebView.this, message.getData(), callback);
                     } else {
-                        Log.i(TAG, "没找到该请求的处理类");
+                        callback.onCallback(-1,"no clientInterface for message from JavaScript");
+                        Log.i(TAG, "no clientInterface for message from JavaScript");
                     }
                 }
             }

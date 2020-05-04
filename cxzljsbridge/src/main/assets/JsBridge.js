@@ -99,7 +99,7 @@
 				}
 				responseCallback(message.responseData);
 				delete responseCallbacks[message.responseId];
-				//else代表是客户端请求的消息
+			//else代表是客户端请求的消息
 			} else {
 				//客户端需要callback
 				if (message.callbackId) {
@@ -117,9 +117,11 @@
 				try {
 					webInterface(message.data, responseCallback);
 				} catch(exception) {
+					responseCallback(-1,exception);
 					console.log("WebViewJavascriptBridge: WARNING: javascript webInterface threw.", message, exception);
 				}
 				if(!webInterface){
+				    responseCallback(-1,"no webInterface for message from Java");
 					console.log("WebViewJavascriptBridge: WARNING: no webInterface for message from Java:", message);
 				}
 			}

@@ -49,20 +49,13 @@
 
     //初始化jsbridge
     function setupWebViewJavascriptBridge(callback) {
-        console.log("WebViewJavascriptBridge: Info: init4");
-
+        console.log("WebViewJavascriptBridge: Info: init");
         if (window.WebViewJavascriptBridge) {
-            console.log("WebViewJavascriptBridge: Info: init5");
-
             return callback(WebViewJavascriptBridge);
         } else {
-            console.log("WebViewJavascriptBridge: Info: init6");
-
             document.addEventListener(
                 'WebViewJavascriptBridgeReady'
                 , function() {
-                    console.log("WebViewJavascriptBridge: Info: init7");
-
                     callback(WebViewJavascriptBridge)
                 },
                 false
