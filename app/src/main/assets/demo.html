@@ -1,0 +1,106 @@
+<html>
+<body>
+<p>
+<PRE id="show"></PRE>
+</p>
+<p>
+    <input type="text" id="text" value="请输入发送给客户端的内容" />
+</p>
+<p>
+    <input type="button" id="enter1" value="调用客户端接口1" onclick="testClick1();"/>
+</p>
+<p>
+    <input type="button" id="enter2" value="调用客户端接口2" onclick="testClick2();"/>
+</p>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+    eruda.init();
+
+    var JSBRIDGE_INIT = 'cxzlscheme://BRIDGE_LOADED';
+    var INTERFACE1 = "cxzl.web.interface1"
+    var INTERFACE2 = "cxzl.web.interface2"
+
+    //调用客户端方法
+    function testClick1() {
+        var str = document.getElementById("text").value;
+        var data = {id: 1, content: str};
+        window.WebViewJavascriptBridge.callClient(
+            'cxzl.app.interface1'
+            , data
+            , function(responseData) {
+                document.getElementById("show").innerHTML = "调用客户端方法获取到回调:\ndata = " + responseData
+            }
+        );
+    }
+
+    //调用客户端方法
+    function testClick2() {
+        var str = document.getElementById("text").value;
+        var data = {id: 2, content: str};
+        window.WebViewJavascriptBridge.callClient(
+            'cxzl.app.interface2'
+            , data
+            , function(responseData) {
+                document.getElementById("show").innerHTML = "调用客户端方法获取到回调:\ndata = " + responseData
+            }
+        );
+    }
+
+    //初始化jsbridge
+    function setupWebViewJavascriptBridge(callback) {
+        console.log("WebViewJavascriptBridge: Info: init4");
+
+        if (window.WebViewJavascriptBridge) {
+            console.log("WebViewJavascriptBridge: Info: init5");
+
+            return callback(WebViewJavascriptBridge);
+        } else {
+            console.log("WebViewJavascriptBridge: Info: init6");
+
+            document.addEventListener(
+                'WebViewJavascriptBridgeReady'
+                , function() {
+                    console.log("WebViewJavascriptBridge: Info: init7");
+
+                    callback(WebViewJavascriptBridge)
+                },
+                false
+            );
+        }
+        var JBIframe = document.createElement('iframe');
+        JBIframe.style.display = 'none';
+        JBIframe.src = JSBRIDGE_INIT;
+        document.documentElement.appendChild(JBIframe);
+        setTimeout(function() {
+            document.documentElement.removeChild(JBIframe)
+        }, 0)
+    }
+
+    setupWebViewJavascriptBridge(function(bridge) {
+        //收到初始化回调注册接口供客户端调用
+        bridge.registerWebInterface(
+            INTERFACE1,
+            function(data, responseCallback) {
+                document.getElementById("show").innerHTML = "web interface1收到客户端消息:\ndata = " + data;
+                var responseCode = 1;
+                var responseData = {
+                    'Javascript Says':'web interface1的回复'
+                }
+                responseCallback(responseCode,responseData)
+            })
+
+        bridge.registerWebInterface(
+            INTERFACE2,
+            function(data, responseCallback) {
+                document.getElementById("show").innerHTML = "web interface2收到客户端消息:\ndata = " + data;
+                var responseCode = 1;
+                var responseData = {
+                    'Javascript Says':'web interface2的回复'
+                }
+                responseCallback(responseCode,responseData)
+            })
+    })
+</script>
+</html>
+
